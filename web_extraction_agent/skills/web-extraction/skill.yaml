@@ -1,0 +1,386 @@
+id: web-extraction-v1
+name: web-extraction
+version: 1.0.0
+author: paras25619@gmail.com
+
+# Description
+description: |
+  AI-powered web content extraction and structuring service that transforms unstructured
+  web pages into organized, structured data using Firecrawl and Exa search. Extracts
+  comprehensive information including titles, descriptions, content sections, links,
+  contact information, and metadata, presented in structured Pydantic models.
+
+# Tags and Modes
+tags:
+  - web
+  - extraction
+  - scraping
+  - firecrawl
+  - exa
+  - structured-data
+  - content-analysis
+  - html-parsing
+  - data-extraction
+  - web-research
+  - content-aggregation
+  - pydantic
+  - automation
+
+input_modes:
+  - text/plain
+  - application/json
+
+output_modes:
+  - text/plain
+  - application/json
+  - text/markdown
+
+# Example Queries
+examples:
+  - "Extract all information from https://www.example.com"
+  - "Scrape product details from https://store.example.com/product"
+  - "Extract article content from https://news.example.com/article"
+  - "Get company information from https://www.company.com/about"
+  - "Analyze webpage structure from https://docs.example.com"
+  - "Extract contact information from https://business.example.com/contact"
+  - "Scrape pricing table from https://pricing.example.com"
+  - "Extract metadata from https://blog.example.com/post"
+  - "Get all links from https://resources.example.com"
+  - "Analyze e-commerce product page from https://shop.example.com/item"
+
+# Detailed Capabilities
+capabilities_detail:
+  web_content_extraction:
+    supported: true
+    description: "Extract structured content from web pages using Firecrawl and Exa"
+    features:
+      - "HTML parsing and content extraction"
+      - "JavaScript-rendered content handling"
+      - "Automatic content section detection"
+      - "Link extraction with descriptions"
+      - "Metadata extraction (title, description, etc.)"
+      - "Contact information identification"
+      - "Feature and key point extraction"
+    limitations: "Rate-limited by API providers, requires valid URLs"
+
+  structured_output:
+    supported: true
+    description: "Organize extracted content into structured Pydantic models"
+    features:
+      - "PageInformation schema for comprehensive data"
+      - "ContentSection models for organized content"
+      - "Optional field handling for varied page structures"
+      - "Type validation and data normalization"
+      - "Consistent output format regardless of source"
+    limitations: "Schema fixed, custom fields require code changes"
+
+  advanced_scraping:
+    supported: true
+    description: "Optional Firecrawl integration for complex scraping scenarios"
+    features:
+      - "Crawling multi-page sites"
+      - "JavaScript execution and rendering"
+      - "Proxy support and rate limiting"
+      - "Custom extraction selectors"
+      - "PDF and document parsing"
+    limitations: "Requires Firecrawl API key, optional feature"
+
+# Requirements
+requirements:
+  packages:
+    - "agno>=2.2.0"
+    - "openai>=2.11.0"
+    - "exa-py>=2.0.0"
+    - "firecrawl-py>=0.0.11"
+    - "pydantic>=2.0.0"
+    - "mem0ai>=1.0.1"
+    - "sqlalchemy>=2.0.45"
+    - "python-dotenv>=1.0.1"
+  system:
+    - "Python 3.12 or higher"
+    - "Internet access for web requests"
+  min_memory_mb: 512
+  external_services:
+    - "OpenRouter API (required for LLM)"
+    - "Exa API (required for content extraction)"
+    - "Firecrawl API (optional for advanced scraping)"
+    - "Mem0 API (optional for conversation memory)"
+
+# Performance Metrics
+performance:
+  avg_processing_time_ms: 15000
+  max_concurrent_requests: 2
+  memory_per_request_mb: 512
+  scalability: horizontal
+
+# Tool Restrictions
+allowed_tools:
+  - FirecrawlTools
+  - ExaTools
+  - Mem0Tools
+  - Search
+  - Extract
+  - Analyze
+  - Read
+
+# Rich Documentation
+documentation:
+  overview: |
+    This skill provides AI-powered web content extraction and structuring capabilities.
+    It transforms unstructured HTML content into organized, structured data using a
+    combination of Firecrawl for advanced web scraping and Exa for reliable content
+    extraction. The extracted information is organized into Pydantic models for easy
+    processing, storage, and analysis.
+
+    The skill handles various web content types including articles, product pages,
+    company websites, documentation, and more. It gracefully handles optional fields
+    and varied page structures, providing consistent output regardless of the source
+    website's organization.
+
+  use_cases:
+    when_to_use:
+      - "Competitive intelligence and market research"
+      - "Content aggregation and monitoring"
+      - "Knowledge base construction from web sources"
+      - "Automated documentation generation"
+      - "Product information extraction from e-commerce sites"
+      - "News and article content aggregation"
+      - "Company information and contact extraction"
+      - "Website structure analysis and auditing"
+      - "Data collection for machine learning datasets"
+      - "Automated research and information gathering"
+
+    when_not_to_use:
+      - "Real-time web scraping with sub-second requirements"
+      - "Extracting content from password-protected or private sites"
+      - "Bypassing paywalls or subscription content"
+      - "Scraping at massive scale without proper rate limiting"
+      - "Extracting copyrighted content without permission"
+      - "Dynamic content requiring human interaction"
+      - "CAPTCHA-protected or bot-blocked websites"
+
+  input_structure: |
+    Accepts URLs or web content extraction requests:
+
+    Plain text URL:
+    "https://www.example.com"
+
+    JSON format with options:
+    {
+      "url": "https://www.example.com",
+      "extract_options": {
+        "include_links": true,
+        "include_contact": true,
+        "include_metadata": true,
+        "content_depth": "detailed"
+      }
+    }
+
+    Constraints:
+    - Max URL length: 2048 characters
+    - Timeout: 60 seconds for content extraction
+    - Valid HTTP/HTTPS URLs only
+    - Rate-limited per API provider policies
+
+  output_format: |
+    Standard PageInformation Output:
+
+    {
+      "url": "https://www.example.com",
+      "title": "Example Website",
+      "description": "Example website description...",
+      "features": ["Feature 1", "Feature 2"],
+      "content_sections": [
+        {
+          "heading": "Section Title",
+          "content": "Section content text..."
+        }
+      ],
+      "links": {
+        "About Us": "https://www.example.com/about",
+        "Contact": "https://www.example.com/contact"
+      },
+      "contact_info": {
+        "email": "info@example.com",
+        "phone": "+1-234-567-8900"
+      },
+      "metadata": {
+        "language": "en",
+        "charset": "UTF-8"
+      }
+    }
+
+    Error Response:
+    {
+      "success": false,
+      "error": {
+        "code": "EXTRACTION_ERROR",
+        "message": "Failed to extract content from URL"
+      },
+      "metadata": {
+        "url": "original_url",
+        "attempted_tools": ["Firecrawl", "Exa"]
+      }
+    }
+
+  error_handling:
+    - "Invalid URLs: Return clear error message with format guidance"
+    - "Rate limiting: Implement exponential backoff and retry logic"
+    - "Content blocking: Fallback to alternative extraction methods"
+    - "Timeout errors: Return partial results with explanation"
+    - "API failures: Graceful degradation with available tools"
+    - "Parsing errors: Return raw content when structured extraction fails"
+
+  examples:
+    - title: "Basic Website Extraction"
+      input:
+        url: "https://www.agno.com"
+      output:
+        url: "https://www.agno.com"
+        title: "Agno - AI Agent Framework"
+        description: "Agno is an open-source framework for building AI agents..."
+        features: ["Open source", "Python-based", "Extensible architecture"]
+        content_sections:
+          - heading: "Getting Started"
+            content: "Install Agno with pip install agno..."
+        links:
+          Documentation: "https://docs.agno.com"
+          GitHub: "https://github.com/agno/agno"
+        metadata:
+          framework: "Agno"
+          version: "2.2.0"
+
+    - title: "E-commerce Product Extraction"
+      input:
+        url: "https://store.example.com/product/123"
+        extract_options:
+          include_links: true
+          include_contact: false
+      output:
+        url: "https://store.example.com/product/123"
+        title: "Premium Wireless Headphones"
+        description: "High-quality wireless headphones with noise cancellation"
+        features: ["Noise cancellation", "30-hour battery", "Bluetooth 5.2"]
+        content_sections:
+          - heading: "Product Description"
+            content: "These premium headphones offer exceptional sound quality..."
+          - heading: "Specifications"
+            content: "Driver: 40mm, Frequency: 20Hz-20kHz..."
+        links:
+          "Buy Now": "https://store.example.com/cart/add/123"
+          "Reviews": "https://store.example.com/product/123/reviews"
+        metadata:
+          price: "$199.99"
+          availability: "In stock"
+
+  best_practices:
+    for_developers:
+      - "Always respect robots.txt and website terms of service"
+      - "Implement proper rate limiting to avoid IP blocking"
+      - "Cache frequently requested URLs to reduce API costs"
+      - "Validate URLs before attempting extraction"
+      - "Handle JavaScript-rendered content with appropriate tools"
+      - "Provide clear attribution for extracted content"
+      - "Monitor API usage and implement cost controls"
+
+    for_orchestrators:
+      - "Route web content extraction requests to this skill"
+      - "Implement URL validation and sanitization at the orchestration layer"
+      - "Cache extraction results for identical URLs"
+      - "Monitor extraction success rates and API health"
+      - "Chain with data processing skills for post-extraction analysis"
+      - "Implement quality checks for extracted content"
+      - "Use for content monitoring and change detection workflows"
+
+  installation: |
+    Required packages:
+    pip install agno openai exa-py firecrawl-py pydantic mem0ai sqlalchemy python-dotenv
+
+    Environment variables:
+    OPENROUTER_API_KEY=your_openrouter_api_key      # Required for LLM
+    EXA_API_KEY=your_exa_api_key                    # Required for content extraction
+    FIRECRAWL_API_KEY=your_firecrawl_api_key        # Optional for advanced scraping
+    MEM0_API_KEY=your_mem0_api_key                  # Optional for memory
+    MODEL_NAME=openai/gpt-4o                        # Optional model specification
+    ENABLE_FIRECRAWL=true                           # Optional Firecrawl control
+
+    Usage example:
+    ```python
+    from web_extraction_agent.main import handler
+    
+    result = await handler([
+        {"role": "user", "content": "Extract information from https://www.example.com"}
+    ])
+    ```
+
+  versioning:
+    - version: "1.0.0"
+      date: "2026-01-12"
+      changes: "Initial release with Firecrawl and Exa integration, Pydantic structured output, and optional memory features"
+
+# Assessment fields for skill negotiation
+assessment:
+  keywords:
+    - "web"
+    - "extract"
+    - "scrape"
+    - "parse"
+    - "content"
+    - "html"
+    - "website"
+    - "page"
+    - "data"
+    - "information"
+    - "structure"
+    - "analyze"
+    - "research"
+    - "aggregate"
+    - "monitor"
+    - "crawl"
+    - "firecrawl"
+    - "exa"
+    - "pydantic"
+    - "metadata"
+    - "links"
+    - "contact"
+    - "automation"
+
+  specializations:
+    - domain: "web_content_extraction"
+      confidence_boost: 0.4
+    - domain: "structured_data_processing"
+      confidence_boost: 0.3
+    - domain: "web_research_automation"
+      confidence_boost: 0.2
+    - domain: "content_aggregation"
+      confidence_boost: 0.1
+
+  anti_patterns:
+    - "real_time_chat"
+    - "image_generation"
+    - "video_processing"
+    - "audio_transcription"
+    - "code_generation"
+    - "mathematical_calculations"
+    - "weather_forecast"
+    - "stock_market"
+    - "medical_diagnosis"
+    - "legal_advice"
+
+  complexity_indicators:
+    simple:
+      - "extract page title"
+      - "get page description"
+      - "basic content extraction"
+      - "single page analysis"
+    medium:
+      - "structured content extraction"
+      - "multiple content sections"
+      - "link and metadata extraction"
+      - "contact information finding"
+    complex:
+      - "multi-page site crawling"
+      - "dynamic JavaScript content"
+      - "complex data structure extraction"
+      - "e-commerce product analysis"
+      - "news article aggregation"
