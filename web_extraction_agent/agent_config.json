@@ -1,5 +1,5 @@
 {
-  "author": "paras25619@gmail.com",
+  "author": "paras@getbindu.com",
   "name": "web-extraction-agent",
   "description": "AI-powered agent that transforms unstructured web content into organized, structured data using Firecrawl and Exa search. Extracts comprehensive information from web pages and presents it in structured Pydantic models.",
   "version": "1.0.0",

@@ -2,12 +2,12 @@
 name = "web-extraction-agent"
 version = "0.1.0"
 description = "AI-powered agent that transforms unstructured web content into organized, structured data using Firecrawl and Exa search. Extracts comprehensive information from web pages and presents it in structured Pydantic models for easy processing and analysis."
-authors = [{ name = "Paras Chamoli", email = "paras25619@gmail.com" }]
+authors = [{ name = "Paras Chamoli", email = "paras@getbindu.com" }]
 readme = "README.md"
 keywords = ["python", "ai", "web", "scraping", "extraction", "firecrawl", "exa", "bindu", "mem0", "pydantic", "structured-data"]
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "bindu==2026.9.2.2",
+    "bindu==2026.9.4",
     "agno>=2.2.0",
     "openai>=2.11.0",
     "exa-py>=2.0.0",
