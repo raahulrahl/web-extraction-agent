@@ -36,14 +36,9 @@
       "required": true
     },
     {
-      "key": "MODEL_NAME",
-      "description": "Model ID for OpenRouter (default: openai/gpt-4o)",
-      "required": false
-    },
-    {
       "key": "MEM0_API_KEY",
       "description": "Mem0 API key for conversation memory",
-      "required": false
+      "required": true
     },
     {
       "key": "EXA_API_KEY",
@@ -53,12 +48,12 @@
     {
       "key": "FIRECRAWL_API_KEY",
       "description": "Firecrawl API key for advanced web scraping (optional)",
-      "required": false
+      "required": true
     },
     {
       "key": "ENABLE_FIRECRAWL",
       "description": "Enable Firecrawl web scraping (default: true)",
-      "required": false
+      "required": true
     }
   ]
 }

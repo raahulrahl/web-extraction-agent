@@ -5,10 +5,9 @@ author: paras@getbindu.com
 
 # Description
 description: |
-  Extracts and structures web page content by transforming unstructured HTML
-  into organized, standardized data sections. Identifies titles, descriptions,
-  content sections, links, contact information, and metadata to produce
-  consistent structured output suitable for research, monitoring, and automation workflows.
+  Extracts web page content using Exa and optionally Firecrawl, then structures it
+  into JSON format using OpenRouter LLM. Returns PageInformation schema with url,
+  title, description, features, content_sections, links, contact_info, and metadata.
 
 # Tags and Modes
 tags:
@@ -17,244 +16,209 @@ tags:
   - structured-data
   - scraping
   - content-analysis
-  - research
-  - automation
-  - metadata
-  - parsing
 
 input_modes:
   - text/plain
   - application/json
 
 output_modes:
-  - text/plain
   - application/json
 
 # Example Queries
 examples:
-  - "Extract all information from https://www.example.com"
+  - "Extract information from https://en.wikipedia.org/wiki/Python_(programming_language)"
+  - "Extract information from https://www.mozilla.org/en-US/"
   - "Get product details from this page"
-  - "Extract contact information from this website"
-  - "Analyze webpage structure from this URL"
   - "Scrape article content from this link"
 
 # Detailed Capabilities
 capabilities_detail:
   primary_capability:
     supported: true
-    description: "Structured extraction of publicly accessible web page content"
+    description: "Web content extraction using Exa and Firecrawl tools with LLM-based structuring"
     features:
-      - "Extracts page title and description"
-      - "Identifies structured content sections"
-      - "Extracts internal and external links"
-      - "Identifies contact information when available"
-      - "Extracts visible metadata"
-      - "Normalizes output into consistent structure"
+      - "Uses ExaTools for web content retrieval (required)"
+      - "Uses FirecrawlTools for scraping and crawling (optional, enabled by default)"
+      - "LLM processes raw content into PageInformation JSON schema"
+      - "Extracts title, description, features, content_sections, links, contact_info, metadata"
+      - "Returns structured JSON output only"
     limitations: |
-      Requires publicly accessible web pages.
-      Cannot bypass authentication, paywalls, or CAPTCHA systems.
+      Depends on Exa API for content retrieval.
+      Firecrawl is optional but enabled by default if API key provided.
+      No retry logic visible in code.
+      No explicit rate limiting in code.
+      No explicit authentication/paywall bypass.
 
   secondary_capability:
-    supported: true
-    description: "Content organization and structural assessment"
-    features:
-      - "Organizes content into logical sections"
-      - "Identifies product features or service highlights"
-      - "Detects page type (article, product, documentation, company site)"
-      - "Provides structural clarity assessment"
-      - "Supports multi-section hierarchical output"
+    supported: false
+    description: "Not supported by code"
+    features: []
 
 # Requirements
 requirements:
   packages:
     - "agno"
-    - "exa"
-    - "firecrawl"
-    - "openrouter"
-    - "mem0"
+    - "exa (required)"
+    - "firecrawl (optional)"
+    - "openrouter (required)"
+    - "mem0 (optional)"
+    - "bindu"
+    - "pydantic"
+  environment_variables:
+    - "OPENROUTER_API_KEY (required)"
+    - "EXA_API_KEY (required)"
+    - "FIRECRAWL_API_KEY (optional)"
+    - "MEM0_API_KEY (optional)"
+    - "MODEL_NAME (optional, default: openai/gpt-4o)"
+    - "ENABLE_FIRECRAWL (optional, default: true)"
   system:
-    - "Internet access for URL retrieval"
+    - "Internet access for API calls"
   min_memory_mb: 512
 
 # Performance Metrics
 performance:
   avg_processing_time_ms: 15000
-  max_concurrent_requests: 2
-  memory_per_request_mb: 512
-  scalability: horizontal
+  max_concurrent_requests: "Not specified in code"
+  memory_per_request_mb: "Not specified in code"
+  scalability: "Not specified in code"
 
 # Tool Restrictions
 allowed_tools:
-  - Read
-  - Extract
-  - Analyze
-  - Write
+  - "ExaTools (search, find_similar, get_contents)"
+  - "FirecrawlTools (scrape, crawl) - optional"
+  - "Mem0Tools (memory operations) - optional"
 
 # Rich Documentation
 documentation:
   overview: |
-    This skill extracts structured data from publicly accessible web pages.
-    It converts raw HTML into organized sections including titles, descriptions,
-    content blocks, links, contact details, and metadata.
+    Agent built on Agno framework that fetches web content via Exa API (required)
+    and optionally Firecrawl API, then uses OpenRouter LLM to structure the content
+    into a PageInformation JSON schema.
 
-    Designed for research, automation, competitive analysis, documentation
-    building, and knowledge aggregation workflows.
-
-    Built on the Agno framework with OpenRouter for content reasoning
-    and optional Mem0 for session memory.
+    The agent uses lazy initialization and runs on port 3773 by default.
+    Mem0 can be enabled for conversation memory if API key is provided.
 
   use_cases:
     when_to_use:
-      - "Extracting structured information from company websites"
-      - "Scraping product details from e-commerce pages"
-      - "Aggregating article content for research"
-      - "Building knowledge bases from web sources"
-      - "Collecting metadata and structured content"
-      - "Website structure analysis"
+      - "Extracting structured information from publicly accessible URLs"
+      - "Converting web pages to JSON format"
+      - "Collecting page metadata, links, and contact information"
 
     when_not_to_use:
-      - "Bypassing paywalls or subscription systems"
-      - "Extracting private or authenticated content"
-      - "Real-time high-frequency scraping"
-      - "Mass crawling without rate limiting"
-      - "CAPTCHA-protected websites"
-      - "Visual or image-based content analysis"
+      - "Bypassing authentication or paywalls (not supported by code)"
+      - "High-frequency scraping (no rate limiting visible)"
+      - "Multi-page crawling (single URL per request based on examples)"
+      - "Visual or image content analysis (text-based only)"
 
   input_structure: |
-    Accepts URLs in plain text or structured JSON format.
+    Accepts natural language text containing a URL.
 
-    Example (Plain Text):
+    Example:
     "Extract information from https://www.example.com"
 
-    Example (JSON):
-    {
-      "url": "https://www.example.com",
-      "focus": "full | metadata | links | contact | content",
-      "content_depth": "basic | standard | detailed",
-      "include_links": true
-    }
-
-    Constraints:
-    - Must contain a valid HTTP or HTTPS URL
-    - Publicly accessible page only
-    - One URL per request
-    - Maximum recommended response size enforced by system limits
-    - No authentication-based content extraction
+    The agent extracts the URL from the message and processes it.
+    No structured JSON input parameters are enforced by the code.
 
   output_format: |
-    Returns structured extraction results with standardized sections.
+    Returns JSON matching PageInformation Pydantic schema:
 
-    Output Structure:
-    - PAGE SUMMARY: Brief summary (< 30 words)
-    - PAGE METADATA:
-      - URL
-      - TITLE
-      - DESCRIPTION
-      - PAGE TYPE (article | product | documentation | company | other)
-    - CONTENT SECTIONS: For each section:
-      - SECTION TITLE
-      - SECTION CONTENT (condensed text)
-    - FEATURES / KEY HIGHLIGHTS: Important bullet points if detected
-    - LINKS:
-      - INTERNAL LINKS (list)
-      - EXTERNAL LINKS (list)
-    - CONTACT INFORMATION:
-      - EMAIL
-      - PHONE
-      - ADDRESS
-    - STRUCTURE ASSESSMENT:
-      - CONTENT ORGANIZATION (High/Medium/Low)
-      - INFORMATION CLARITY (High/Medium/Low)
-      - COMPLETENESS (High/Medium/Low)
-    - EXTRACTION METADATA:
-      - EXTRACTION METHOD USED
-      - PROCESSING TIME (ms)
-      - SUCCESS (true/false)
+    {
+      "url": "string",
+      "title": "string",
+      "description": "string | null",
+      "features": ["string"] | null,
+      "content_sections": [
+        {
+          "heading": "string | null",
+          "content": "string"
+        }
+      ] | null,
+      "links": {"link_name": "url"} | null,
+      "contact_info": {"type": "value"} | null,
+      "metadata": {"key": "value"} | null
+    }
+
+    Agent instructions specify markdown=False and structured_outputs=True.
+    Output is wrapped in JSON code block in response.
 
   error_handling:
-    - "Invalid URL: Returns error requesting valid HTTP/HTTPS link"
-    - "Access denied: Returns access_denied message"
-    - "Timeout: Retries with exponential backoff, max 3 attempts"
-    - "Content parsing failure: Returns partial extraction with explanation"
-    - "Unsupported content type: Returns unsupported_content_type error"
-    - "Rate limit reached: Returns rate_limit_exceeded message"
+    - "APIKeyError raised if OPENROUTER_API_KEY or EXA_API_KEY missing"
+    - "RuntimeError if agent not initialized"
+    - "Tool initialization failures logged but may continue without optional tools"
+    - "No explicit retry logic in code"
+    - "No explicit timeout handling in code"
 
   examples:
+    - title: "Wikipedia Page Extraction"
+      input:
+        text: "Extract information from https://en.wikipedia.org/wiki/Python_(programming_language)"
+      output:
+        url: "https://en.wikipedia.org/wiki/Python_(programming_language)"
+        title: "Python (programming language)"
+        description: null
+        features: null
+        content_sections: [{"heading": null, "content": "Python (programming language) - Wikipedia..."}]
+
     - title: "Company Website Extraction"
       input:
-        url: "https://www.company.com"
+        text: "Extract information from https://www.mozilla.org/en-US/"
       output:
-        page_summary: "Company website presenting services and contact information."
-        sections_detected: 5
-        processing_time_ms: 14200
-
-    - title: "E-commerce Product Extraction"
-      input:
-        url: "https://store.example.com/product/123"
-        focus: "full"
-      output:
-        page_summary: "Product page detailing specifications and pricing."
-        sections_detected: 6
-        processing_time_ms: 15800
+        url: "https://www.mozilla.org/"
+        title: "Welcome to Mozilla"
+        description: "Mozilla - Internet for people, not profit (US)"
+        features: ["Trustworthy tech solutions", "Policy advocacy for digital rights", "Safer, private internet experience"]
+        content_sections: [{"heading": "Welcome to Mozilla", "content": "..."}]
+        links: {"Learn about us": "https://www.mozilla.org/en-US/about/", ...}
+        metadata: {"language": "en-US", "region": "US"}
 
   best_practices:
     for_developers:
-      - "Respect robots.txt and website terms of service"
-      - "Implement rate limiting and caching"
-      - "Validate URLs before extraction"
-      - "Handle JavaScript-rendered content gracefully"
-      - "Provide attribution when required"
+      - "Set OPENROUTER_API_KEY and EXA_API_KEY environment variables"
+      - "Optionally set FIRECRAWL_API_KEY for advanced scraping"
+      - "Optionally set MEM0_API_KEY for conversation memory"
+      - "Use MODEL_NAME to specify OpenRouter model (default: openai/gpt-4o)"
+      - "Set ENABLE_FIRECRAWL=false to disable Firecrawl if needed"
 
     for_orchestrators:
-      - "Route web URL extraction requests to this skill"
-      - "Validate URLs before forwarding"
-      - "Limit concurrency to 2 requests"
-      - "Apply timeout policy (~60 seconds)"
-      - "Cache extraction results for repeated URLs"
+      - "Send messages to http://127.0.0.1:3773 using JSON-RPC 2.0"
+      - "Use message/send method with skillId: web-extraction-v1"
+      - "Poll tasks/get to retrieve completed results"
+      - "Expect JSON output in artifacts with name 'result'"
+      - "Agent initializes lazily on first request"
 
   installation: |
-    Installation instructions for the web-extraction agent.
+    Installation based on code:
 
-    Required packages:
-    uv sync
-
-    Environment variables:
-    - OPENROUTER_API_KEY: Required for reasoning
-    - EXA_API_KEY: Required for extraction
-    - FIRECRAWL_API_KEY: Optional for advanced crawling
-    - MEM0_API_KEY: Optional for memory
-
-    Quick start:
-    1. Clone repository
-    2. Configure environment variables
-    3. Run: uv venv --python 3.12 && source .venv/bin/activate
-    4. Run: uv sync
-    5. Start agent: python -m web_extraction_agent.main
+    1. Install dependencies: uv sync
+    2. Set environment variables:
+       - OPENROUTER_API_KEY (required)
+       - EXA_API_KEY (required)
+       - FIRECRAWL_API_KEY (optional)
+       - MEM0_API_KEY (optional)
+       - MODEL_NAME (optional, default: openai/gpt-4o)
+       - ENABLE_FIRECRAWL (optional, default: true)
+    3. Run: python -m web_extraction_agent.main
+    4. Server starts on http://127.0.0.1:3773
 
   versioning:
     - version: "1.0.0"
       date: "2026-01-12"
-      changes: "Initial release with structured content extraction and normalization"
+      changes: "Initial implementation with Exa, Firecrawl, OpenRouter, and Mem0 integration"
 
 # Assessment fields for skill negotiation
 assessment:
   keywords:
+    - "extract information from"
     - "web extraction"
     - "scrape website"
     - "extract content"
-    - "parse html"
-    - "structured data"
-    - "website analysis"
-    - "metadata extraction"
-    - "contact extraction"
-    - "page structure"
+    - "get information from url"
+    - "extract from https"
 
   specializations:
     - domain: "web content extraction"
       confidence_boost: 0.4
-    - domain: "structured data processing"
-      confidence_boost: 0.3
-    - domain: "research automation"
+    - domain: "url-based data retrieval"
       confidence_boost: 0.3
 
   anti_patterns:
@@ -264,15 +228,15 @@ assessment:
     - "audio transcription"
     - "code writing"
     - "mathematical solving"
+    - "multi-page crawling"
+    - "authenticated content"
 
   complexity_indicators:
     simple:
-      - "extract page title"
-      - "get metadata"
+      - "extract from url"
+      - "get page information"
     medium:
-      - "structured content extraction"
-      - "link classification"
+      - "extract information from https"
+      - "scrape website content"
     complex:
-      - "multi-page crawling"
-      - "dynamic JavaScript content"
-      - "e-commerce structure analysis"
+      - "Not supported by code"
