@@ -86,7 +86,6 @@ cp .env.example .env
 # FIRECRAWL_API_KEY=sk-...       # Optional: For Firecrawl advanced scraping
 # MEM0_API_KEY=sk-...            # Optional: For conversation memory
 # MODEL_NAME=openai/gpt-4o       # Optional: Model ID for OpenRouter
-# ENABLE_FIRECRAWL=true          # Optional: Enable/disable Firecrawl
 ```
 
 ### 3. Run Locally
@@ -124,7 +123,6 @@ EXA_API_KEY=sk-...                  # Required for web content extraction
 FIRECRAWL_API_KEY=sk-...            # Optional: Advanced web scraping
 MEM0_API_KEY=sk-...                 # Optional: Conversation memory
 MODEL_NAME=openai/gpt-4o            # Model ID for OpenRouter
-ENABLE_FIRECRAWL=true               # Enable/disable Firecrawl
 ```
 
 ### Port Configuration
@@ -215,7 +213,6 @@ docker run -d \
   -e FIRECRAWL_API_KEY=your_firecrawl_key \
   -e MEM0_API_KEY=your_mem0_key \
   -e MODEL_NAME=openai/gpt-4o \
-  -e ENABLE_FIRECRAWL=true \
   --name web-extraction-agent \
   web-extraction-agent
 
@@ -240,7 +237,6 @@ services:
       - FIRECRAWL_API_KEY=${FIRECRAWL_API_KEY}
       - MEM0_API_KEY=${MEM0_API_KEY}
       - MODEL_NAME=${MODEL_NAME:-openai/gpt-4o}
-      - ENABLE_FIRECRAWL=${ENABLE_FIRECRAWL:-true}
     restart: unless-stopped
 ```
 
@@ -344,7 +340,6 @@ curl -X POST http://localhost:3773/chat \
 | :--- | :--- |
 | "EXA_API_KEY required" | Get your key from exa.ai - Required for web content extraction |
 | "OPENROUTER_API_KEY required" | Get your key from openrouter.ai |
-| "Firecrawl not working" | Set `ENABLE_FIRECRAWL=false` or get a key from getfirecrawl.com |
 | "Port 3773 already in use" | Change port in `agent_config.json` or kill the process: `lsof -ti:3773 | xargs kill -9` |
 | "JSON parsing error" | Ensure agent output matches PageInformation schema |
 | "Website blocking requests" | Enable Firecrawl for JavaScript rendering and proxy support |

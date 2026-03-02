@@ -105,11 +105,6 @@ def load_config() -> dict:
                 "description": "Firecrawl API key for advanced web scraping (optional)",
                 "required": False,
             },
-            {
-                "key": "ENABLE_FIRECRAWL",
-                "description": "Enable Firecrawl web scraping (default: true)",
-                "required": False,
-            },
         ],
     }
 

@@ -70,7 +70,6 @@ requirements:
     - "FIRECRAWL_API_KEY (optional)"
     - "MEM0_API_KEY (optional)"
     - "MODEL_NAME (optional, default: openai/gpt-4o)"
-    - "ENABLE_FIRECRAWL (optional, default: true)"
   system:
     - "Internet access for API calls"
   min_memory_mb: 512
@@ -177,7 +176,6 @@ documentation:
       - "Optionally set FIRECRAWL_API_KEY for advanced scraping"
       - "Optionally set MEM0_API_KEY for conversation memory"
       - "Use MODEL_NAME to specify OpenRouter model (default: openai/gpt-4o)"
-      - "Set ENABLE_FIRECRAWL=false to disable Firecrawl if needed"
 
     for_orchestrators:
       - "Send messages to http://127.0.0.1:3773 using JSON-RPC 2.0"
@@ -196,7 +194,6 @@ documentation:
        - FIRECRAWL_API_KEY (optional)
        - MEM0_API_KEY (optional)
        - MODEL_NAME (optional, default: openai/gpt-4o)
-       - ENABLE_FIRECRAWL (optional, default: true)
     3. Run: python -m web_extraction_agent.main
     4. Server starts on http://127.0.0.1:3773
 

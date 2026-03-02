@@ -49,11 +49,6 @@
       "key": "FIRECRAWL_API_KEY",
       "description": "Firecrawl API key for advanced web scraping (optional)",
       "required": true
-    },
-    {
-      "key": "ENABLE_FIRECRAWL",
-      "description": "Enable Firecrawl web scraping (default: true)",
-      "required": true
     }
   ]
 }
