@@ -5,7 +5,7 @@ author: paras@getbindu.com
 
 # Description
 description: |
-  Extracts web page content using Exa and optionally Firecrawl, then structures it
+  Extracts web page content using Exa and optionally Firecrawl and Tavily, then structures it
   into JSON format using OpenRouter LLM. Returns PageInformation schema with url,
   title, description, features, content_sections, links, contact_info, and metadata.
 
@@ -35,9 +35,10 @@ examples:
 capabilities_detail:
   primary_capability:
     supported: true
-    description: "Web content extraction using Exa and Firecrawl tools with LLM-based structuring"
+    description: "Web content extraction using Exa, Tavily, and Firecrawl tools with LLM-based structuring"
     features:
       - "Uses ExaTools for web content retrieval (required)"
+      - "Uses TavilyTools for web search and content extraction (optional)"
       - "Uses FirecrawlTools for scraping and crawling (optional, enabled by default)"
       - "LLM processes raw content into PageInformation JSON schema"
       - "Extracts title, description, features, content_sections, links, contact_info, metadata"
@@ -45,6 +46,7 @@ capabilities_detail:
     limitations: |
       Depends on Exa API for content retrieval.
       Firecrawl is optional but enabled by default if API key provided.
+      Tavily is optional and enabled when TAVILY_API_KEY is provided.
       No retry logic visible in code.
       No explicit rate limiting in code.
       No explicit authentication/paywall bypass.
@@ -59,6 +61,7 @@ requirements:
   packages:
     - "agno"
     - "exa (required)"
+    - "tavily-python (optional)"
     - "firecrawl (optional)"
     - "openrouter (required)"
     - "mem0 (optional)"
@@ -67,6 +70,7 @@ requirements:
   environment_variables:
     - "OPENROUTER_API_KEY (required)"
     - "EXA_API_KEY (required)"
+    - "TAVILY_API_KEY (optional)"
     - "FIRECRAWL_API_KEY (optional)"
     - "MEM0_API_KEY (optional)"
     - "MODEL_NAME (optional, default: openai/gpt-4o)"
@@ -84,6 +88,7 @@ performance:
 # Tool Restrictions
 allowed_tools:
   - "ExaTools (search, find_similar, get_contents)"
+  - "TavilyTools (search) - optional"
   - "FirecrawlTools (scrape, crawl) - optional"
   - "Mem0Tools (memory operations) - optional"
 
@@ -91,7 +96,7 @@ allowed_tools:
 documentation:
   overview: |
     Agent built on Agno framework that fetches web content via Exa API (required)
-    and optionally Firecrawl API, then uses OpenRouter LLM to structure the content
+    and optionally Tavily API and Firecrawl API, then uses OpenRouter LLM to structure the content
     into a PageInformation JSON schema.
 
     The agent uses lazy initialization and runs on port 3773 by default.
@@ -173,6 +178,7 @@ documentation:
   best_practices:
     for_developers:
       - "Set OPENROUTER_API_KEY and EXA_API_KEY environment variables"
+      - "Optionally set TAVILY_API_KEY for additional web search and extraction"
       - "Optionally set FIRECRAWL_API_KEY for advanced scraping"
       - "Optionally set MEM0_API_KEY for conversation memory"
       - "Use MODEL_NAME to specify OpenRouter model (default: openai/gpt-4o)"
@@ -191,6 +197,7 @@ documentation:
     2. Set environment variables:
        - OPENROUTER_API_KEY (required)
        - EXA_API_KEY (required)
+       - TAVILY_API_KEY (optional)
        - FIRECRAWL_API_KEY (optional)
        - MEM0_API_KEY (optional)
        - MODEL_NAME (optional, default: openai/gpt-4o)

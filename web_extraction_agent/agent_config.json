@@ -49,6 +49,11 @@
       "key": "FIRECRAWL_API_KEY",
       "description": "Firecrawl API key for advanced web scraping (optional)",
       "required": true
+    },
+    {
+      "key": "TAVILY_API_KEY",
+      "description": "Tavily API key for web search and content extraction (optional)",
+      "required": false
     }
   ]
 }
