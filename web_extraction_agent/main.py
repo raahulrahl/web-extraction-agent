@@ -22,6 +22,7 @@ from agno.agent import Agent
 from agno.models.openrouter import OpenRouter
 from agno.tools.exa import ExaTools
 from agno.tools.firecrawl import FirecrawlTools
+from agno.tools.tavily import TavilyTools
 from agno.tools.mem0 import Mem0Tools
 from bindu.penguin.bindufy import bindufy
 from dotenv import load_dotenv
@@ -109,14 +110,15 @@ def load_config() -> dict:
     }
 
 
-def _get_api_keys() -> tuple[str | None, str | None, str | None, str | None, str]:
+def _get_api_keys() -> tuple[str | None, str | None, str | None, str | None, str | None, str]:
     """Get API keys and configuration from environment."""
     openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
     mem0_api_key = os.getenv("MEM0_API_KEY")
     exa_api_key = os.getenv("EXA_API_KEY")
     firecrawl_api_key = os.getenv("FIRECRAWL_API_KEY")
+    tavily_api_key = os.getenv("TAVILY_API_KEY")
     model_name = os.getenv("MODEL_NAME", "openai/gpt-4o")
-    return openrouter_api_key, mem0_api_key, exa_api_key, firecrawl_api_key, model_name
+    return openrouter_api_key, mem0_api_key, exa_api_key, firecrawl_api_key, tavily_api_key, model_name
 
 
 def _create_llm_model(openrouter_api_key: str, model_name: str) -> OpenRouter:
@@ -140,6 +142,7 @@ def _setup_tools(
     mem0_api_key: str | None,
     exa_api_key: str,
     firecrawl_api_key: str | None,
+    tavily_api_key: str | None = None,
 ) -> list:
     """Set up all tools for the web extraction agent."""
     tools = []
@@ -176,6 +179,18 @@ def _setup_tools(
     else:
         print("Info: Firecrawl disabled or no API key provided")
 
+    # Tavily is optional for additional web search and extraction
+    if tavily_api_key:
+        try:
+            tavily_tools = TavilyTools(api_key=tavily_api_key, search=True, max_tokens=8000)
+            tools.append(tavily_tools)
+            print("🔎 Tavily enabled for web search and content extraction")
+        except Exception as e:
+            print(f"⚠️  Tavily initialization issue: {e}")
+            print("⚠️  Continuing without Tavily (Exa will be used for extraction)")
+    else:
+        print("Info: Tavily disabled or no API key provided")
+
     # Mem0 is optional for conversation memory
     if mem0_api_key:
         try:
@@ -192,7 +207,7 @@ async def initialize_agent() -> None:
     """Initialize the web extraction agent."""
     global agent
 
-    openrouter_api_key, mem0_api_key, exa_api_key, firecrawl_api_key, model_name = _get_api_keys()
+    openrouter_api_key, mem0_api_key, exa_api_key, firecrawl_api_key, tavily_api_key, model_name = _get_api_keys()
 
     # Validate required API keys
     if not openrouter_api_key:
@@ -210,7 +225,7 @@ async def initialize_agent() -> None:
         raise APIKeyError(error_msg)
 
     model = _create_llm_model(openrouter_api_key, model_name)
-    tools = _setup_tools(mem0_api_key, exa_api_key, firecrawl_api_key)
+    tools = _setup_tools(mem0_api_key, exa_api_key, firecrawl_api_key, tavily_api_key)
 
     # Create the web extraction agent
     agent = Agent(
@@ -235,6 +250,7 @@ async def initialize_agent() -> None:
                - Use available tools to fetch and analyze web content
                - Prioritize Firecrawl for advanced scraping when available
                - Use Exa search for reliable content extraction
+               - Use Tavily search for additional web search and extraction when available
                - Handle JavaScript-rendered content appropriately
 
             2. CONTENT ANALYSIS 📋
@@ -294,6 +310,8 @@ async def initialize_agent() -> None:
     print("🌐 Exa search enabled for web content extraction")
     if firecrawl_api_key and os.getenv("ENABLE_FIRECRAWL", "true").lower() in ("true", "1", "yes"):
         print("🕸️ Firecrawl enabled for advanced web scraping")
+    if tavily_api_key:
+        print("🔎 Tavily enabled for web search and content extraction")
     if mem0_api_key:
         print("🧠 Memory system enabled for conversation context")
 
@@ -337,6 +355,8 @@ def _setup_environment_variables(args: argparse.Namespace) -> None:
         os.environ["EXA_API_KEY"] = args.exa_api_key
     if args.firecrawl_api_key:
         os.environ["FIRECRAWL_API_KEY"] = args.firecrawl_api_key
+    if args.tavily_api_key:
+        os.environ["TAVILY_API_KEY"] = args.tavily_api_key
     if args.model:
         os.environ["MODEL_NAME"] = args.model
     if args.enable_firecrawl is not None:
@@ -359,6 +379,8 @@ def _display_configuration_info() -> None:
         config_info.append("🌐 Exa: Web content extraction")
     if os.getenv("FIRECRAWL_API_KEY") and os.getenv("ENABLE_FIRECRAWL", "true").lower() in ("true", "1", "yes"):
         config_info.append("🕸️ Firecrawl: Advanced scraping")
+    if os.getenv("TAVILY_API_KEY"):
+        config_info.append("🔎 Tavily: Web search and extraction")
     if os.getenv("MEM0_API_KEY"):
         config_info.append("🧠 Memory: Conversation context")
 
@@ -400,6 +422,12 @@ def main() -> None:
         type=str,
         default=os.getenv("FIRECRAWL_API_KEY"),
         help="Firecrawl API key for advanced scraping (optional)",
+    )
+    parser.add_argument(
+        "--tavily-api-key",
+        type=str,
+        default=os.getenv("TAVILY_API_KEY"),
+        help="Tavily API key for web search and extraction (optional)",
     )
     parser.add_argument(
         "--model",
